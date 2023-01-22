@@ -1,3 +1,5 @@
+import * as dotenv from "dotenv";
+dotenv.config();
 import "colors";
 import inquirer from "inquirer";
 import Searches from "./models/Searches.js";
@@ -71,4 +73,4 @@ async function main() {
   } while (!!action);
 }
 
-main();
+// main();

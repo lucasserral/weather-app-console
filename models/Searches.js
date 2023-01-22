@@ -12,7 +12,7 @@ class Searches {
       limit: 5,
       language: "es",
       types: "country%2Cregion%2Cdistrict%2Clocality%2Cneighborhood%2Cplace",
-      access_token: MAPBOX_TOKEN,
+      access_token: process.env.MAPBOX_TOKEN,
     };
   }
 
