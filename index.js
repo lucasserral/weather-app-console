@@ -34,6 +34,21 @@ const searchQuestions = [
   },
 ];
 
+async function selectFromList(options) {
+  const choices = options.map((city) => ({
+    value: city.id,
+    name: `${" - ".green} ${city.place_name}`,
+  }));
+  choices.push({ value: 0, name: "Cancel" });
+
+  const list = await inquirer.prompt({
+    type: "list",
+    name: "selection",
+    message: "These are the coincidences to your search. Select one:",
+    choices: choices,
+  });
+  return list.selection;
+}
 async function pause() {
   const pause = await inquirer.prompt({
     type: "input",
@@ -64,7 +79,11 @@ async function main() {
       case 1:
         const city = await getSearch();
         const response = await searches.getCities(city);
-        console.log(response);
+        const responseSelected = await selectFromList(response);
+        const citySelected = response.find(
+          (resp) => resp.id == responseSelected
+        );
+        console.log(citySelected);
         await pause();
         break;
       case 2:
@@ -73,4 +92,4 @@ async function main() {
   } while (!!action);
 }
 
-// main();
+main();

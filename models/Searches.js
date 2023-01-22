@@ -11,7 +11,14 @@ class Searches {
       proximity: "ip",
       limit: 5,
       language: "es",
-      types: "country%2Cregion%2Cdistrict%2Clocality%2Cneighborhood%2Cplace",
+      types: [
+        "country",
+        "region",
+        "district",
+        "locality",
+        "neighborhood",
+        "place",
+      ],
       access_token: process.env.MAPBOX_TOKEN,
     };
   }
@@ -23,10 +30,16 @@ class Searches {
         baseURL: `https://api.mapbox.com/geocoding/v5/mapbox.places/${searchTerm}.json`,
         params: this.paramsMapbox,
       });
-
       const response = await instance.get();
-      return response.data;
-    } catch (err) {}
+      return response.data.features.map((feature) => ({
+        id: feature.id,
+        place_name: feature.place_name,
+        longitude: feature.center[0],
+        latitude: feature.center[1],
+      }));
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 
