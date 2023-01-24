@@ -3,6 +3,7 @@ dotenv.config();
 import "colors";
 import inquirer from "inquirer";
 import Searches from "./models/Searches.js";
+import axios from "axios";
 
 const menuQuestion = [
   {
@@ -49,6 +50,7 @@ async function selectFromList(options) {
   });
   return list.selection;
 }
+
 async function pause() {
   const pause = await inquirer.prompt({
     type: "input",
@@ -68,6 +70,20 @@ async function getSearch() {
   return input.searched;
 }
 
+async function getWeather(lat, lon){
+  const response = await axios.get("https://api.openweathermap.org/data/2.5/weather",{
+    params: {
+      appid: process.env.OPENWEATHER_API_KEY,
+      units: "metric",
+      lat,
+      lon,
+    }
+  })
+
+  return response.data;
+
+}
+
 async function main() {
   const searches = new Searches();
   let action;
@@ -83,7 +99,20 @@ async function main() {
         const citySelected = response.find(
           (resp) => resp.id == responseSelected
         );
-        console.log(citySelected);
+        const weather = await getWeather(citySelected.latitude, citySelected.longitude)
+
+        console.log("----------------------------------------".green)
+        console.log("---------------   INFO   ---------------".green)
+        console.log("----------------------------------------\n".green)
+        console.log("Place:".green, citySelected.place_name)
+        console.log("Longitude:".green, citySelected.longitude)
+        console.log("Latitude:".green, citySelected.latitude)
+        console.log("---")
+        console.log("Weather:".green, weather.weather[0].description)
+        console.log("Temp:".green, weather.main.temp, "°C")
+        console.log("Max:".green, weather.main.temp_max, "°C")
+        console.log("Min:".green, weather.main.temp_min, "°C")
+        console.log("Humidity:".green, weather.main.humidity)
         await pause();
         break;
       case 2:
