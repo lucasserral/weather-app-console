@@ -1,9 +1,10 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 import "colors";
+import fs from "fs"
 import inquirer from "inquirer";
-import Searches from "./models/Searches.js";
 import axios from "axios";
+import Searches from "./models/Searches.js";
 
 const menuQuestion = [
   {
@@ -84,8 +85,18 @@ async function getWeather(lat, lon){
 
 }
 
+function loadData(){
+  try {
+    const data = JSON.parse(fs.readFileSync("./db/.data.json"));
+    return data;
+  } catch (error) {
+    console.log(error)
+    return [];
+  }
+};
+
 async function main() {
-  const searches = new Searches();
+  const searches = new Searches(loadData());
   let action;
   do {
     console.clear();
@@ -100,6 +111,8 @@ async function main() {
           (resp) => resp.id == responseSelected
         );
         const weather = await getWeather(citySelected.latitude, citySelected.longitude)
+
+        searches.updateHistory(citySelected.place_name)
 
         console.log("----------------------------------------".green)
         console.log("---------------   INFO   ---------------".green)
@@ -120,5 +133,7 @@ async function main() {
     }
   } while (!!action);
 }
+
+export { pause }
 
 main();
