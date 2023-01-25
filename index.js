@@ -129,6 +129,8 @@ async function main() {
         await pause();
         break;
       case 2:
+        searches.showHistory()
+        await pause()
         break;
     }
   } while (!!action);

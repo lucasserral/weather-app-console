@@ -34,6 +34,12 @@ class Searches {
     fs.writeFileSync(path, data);
   }
 
+  showHistory(){
+    this.#searchesList.map( (item, index) => {
+      console.log(`${String(++index)}.`.green, item)
+    } )
+  }
+
   async getCities(place = "") {
     const searchTerm = place.split(" ").join("%20");
     try {
