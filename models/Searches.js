@@ -1,4 +1,5 @@
 import axios from "axios";
+import fs from "fs";
 
 class Searches {
   #searchesList = [];
@@ -21,6 +22,22 @@ class Searches {
       ],
       access_token: process.env.MAPBOX_TOKEN,
     };
+  }
+
+  updateHistory(newElement){
+    const path = "./db/.data.json";
+    const dirPath = "./db"
+    this.#searchesList.unshift(newElement)
+    if( this.#searchesList.length > 5 ) this.#searchesList.pop();
+    const data = JSON.stringify(this.#searchesList)
+    fs.mkdirSync(dirPath, { recursive: true });
+    fs.writeFileSync(path, data);
+  }
+
+  showHistory(){
+    this.#searchesList.map( (item, index) => {
+      console.log(`${String(++index)}.`.green, item)
+    } )
   }
 
   async getCities(place = "") {
